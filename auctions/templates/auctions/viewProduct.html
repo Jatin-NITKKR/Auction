@@ -1,0 +1,114 @@
+{% extends "auctions/layout.html" %} {% block body %}
+<div>
+  {% if message %}
+  {% if update %}
+  <div class="alert alert-success" role="alert">
+    {{message}}
+  </div>
+
+  {% else %}
+  <div class="alert alert-danger" role="alert">
+    {{message}}
+  </div>
+  {% endif %}
+  {% endif %}
+</div>
+
+<div class="row mx-4">
+  {% if user.is_authenticated %}
+  {% if isInWatchlist %}
+  <form action="{% url 'removeWatchlist' id=product.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-secondary">
+      Remove from watchlist
+    </button>
+  </form>
+  {% else %}
+  <form action="{% url 'addWatchlist' id=product.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-primary">Add to watchlist</button>
+  </form>
+
+  {%endif%}
+  {% endif %}
+
+</div>
+{% comment %} <div>
+  <h2>Product Name: {{product.name}}</h2>
+  <img src="{{product.imageUrl}}" alt="{{product.name}}" height="300rem">
+  <p>{{product.descript}}</p>
+  <h3>${{product.price.bid}}</h3>
+  <p>Owner: {{product.owner}}</p>
+</div> {% endcomment %}
+<div class="row my-1 d-flex justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card" style="width: 18rem;">
+
+      <img src="{{product.imageUrl}}" class="card-img-top" height="300rem" alt="{{product.name}}">
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow-0 border" style="background-color: #f0f2f5;width: 18rem;">
+      <h3 class="card-title text-center">{{product.name}}</h3>
+      <div class="card-body">
+        <p class="card-text">{{product.descript}}</p>
+        <h4>Current Price: ${{product.price.bid}}</h4>
+        <p>Owner: <b>{{product.owner}}</b></p>
+        {% if user.is_authenticated %}
+          <form action="{% url 'addBid' id=product.id%}" method="POST">
+            {% csrf_token %}
+            
+              <div class="form-group d-flex justify-content-center my-3">
+                
+                <input type="number" min="0" name="newBid" placeholder="Place NewBid">
+                <button type="submit" class="btn btn-warning">Add</button>
+              </div>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="text-center">
+</br>
+  <h4>Comments</h4>
+</div>
+<div class="row my-3 d-flex justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+      <div class="card-body p-4">
+        <div class="form-outline mb-4">
+          <form action="{% url 'addComment' id=product.id%}" method="POST">
+            {% csrf_token %}
+            <input type="text" id="addANote" class="form-control" name="newComment" placeholder="Type comment..." />
+            <div class="text-right"><button type="submit" class="btn btn-primary my-1">Add</button> </div>
+          </form>
+        </div>
+        {% for comment in comments %}
+        <div class="card mb-4">
+          <div class="card-body">
+            <p>{{comment.message}}</p>
+
+            <div class="d-flex justify-content-between">
+              <div class="d-flex flex-row align-items-center">
+                <p class="small mb-0 ms-2">By <strong>{{comment.author}}</strong></p>
+              </div>
+              <div class="d-flex flex-row align-items-center">
+                <p class="small mb-0 ms-2">{{time}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+
+
+
+
+{% endblock %}
