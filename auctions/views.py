@@ -10,7 +10,7 @@ from .models import User,Category,Listing,Bid,Comment
 
 def viewProduct(request,id):
     productData=Listing.objects.get(pk=id)
-    # try:
+    isOwner=productData.owner.username==request.user.username
     isInWatchlist=request.user in productData.watchlist.all()
     comments=Comment.objects.filter(listing=productData)
     now = timezone.now() 
@@ -18,12 +18,33 @@ def viewProduct(request,id):
         "product":productData,
         "isInWatchlist":isInWatchlist,
         "comments":comments,
-        "time":now
+        "time":now,
+        "isOwner":isOwner
     })
+    
+def closeBid(request,id):
+    productData=Listing.objects.get(pk=id)
+    isOwner=productData.owner.username==request.user.username
+    isInWatchlist=request.user in productData.watchlist.all()
+    comments=Comment.objects.filter(listing=productData)
+    now = timezone.now() 
+    productData.isActive=False
+    productData.save()
+    return render(request,"auctions/ViewProduct.html",{
+        "product":productData,
+        "isInWatchlist":isInWatchlist,
+        "comments":comments,
+        "message":"Congrats!! your auction is completed",
+        "update":True,
+        "time":now,
+        "isOwner":isOwner
+    })
+       
     
 def addBid(request,id):
     newBid=request.POST['newBid']
     listingData= Listing.objects.get(pk=id)
+    isOwner=listingData.owner.username==request.user.username
     if int(newBid)>listingData.price.bid:
         updateBid=Bid(user=request.user,bid=int(newBid))
         updateBid.save()
@@ -33,6 +54,7 @@ def addBid(request,id):
             "product":listingData,
             "message":"Bid is updated successfully",
             "update":True,
+            "isOwner":isOwner
             
             
         })
@@ -41,6 +63,7 @@ def addBid(request,id):
             "product":listingData,
             "message":"Bid is not updated",
             "update":False,
+            "isOwner":isOwner
             
         })
 def addComment(request,id):

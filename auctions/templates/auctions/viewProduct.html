@@ -14,8 +14,22 @@
   {% endif %}
 </div>
 
+{% if not product.isActive and product.price.user == user %}
+    <div class="alert alert-success" role="alert">
+      You won the auction for this product
+    </div>
+{% endif %}
+
 <div class="row mx-4">
   {% if user.is_authenticated %}
+    {%if isOwner and product.isActive %}
+      <form action="{% url 'closeBid' id=product.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-secondary my-1">
+          Close Bid
+        </button>
+      </form>
+    {%endif%}
   {% if isInWatchlist %}
   <form action="{% url 'removeWatchlist' id=product.id %}" method="POST">
     {% csrf_token %}
