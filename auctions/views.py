@@ -50,22 +50,11 @@ def addBid(request,id):
         updateBid.save()
         listingData.price=updateBid
         listingData.save()
-        return render(request,"auctions/ViewProduct.html",{
-            "product":listingData,
-            "message":"Bid is updated successfully",
-            "update":True,
-            "isOwner":isOwner
-            
-            
-        })
+        return HttpResponseRedirect(reverse("viewProduct",args=(id, )))
+        
     else:
-        return render(request,"auctions/ViewProduct.html",{
-            "product":listingData,
-            "message":"Bid is not updated",
-            "update":False,
-            "isOwner":isOwner
-            
-        })
+        return HttpResponseRedirect(reverse("viewProduct",args=(id, )))
+        
 def addComment(request,id):
     author=request.user
     listing=Listing.objects.get(pk=id)
