@@ -1,0 +1,100 @@
+body {
+    
+    padding: 1px;
+    /* background-color: hsl(166, 69%, 84%); */
+    background-color: hsl(166, 23%, 63%);
+}
+.navbar-toggler{
+    background-color:white;
+}
+.navbar-nav .nav-item {
+    margin-left: 50px; 
+    /* Adjust the margin as needed */
+    font-size: large;
+}
+
+.activelisting{
+    margin-left: 10px;
+}
+.button-to-left{
+    position: absolute;
+    right: 0;
+}
+
+.login-container {
+    text-align: center;
+    /* justify-content: center; */
+    background-color: rgb(241, 237, 237);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    width:fit-content;
+    height:max-content;
+    margin: 0 auto;
+    
+}
+input {
+    height:fit-content;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 20px;
+}
+label {
+    font-weight: bold;
+}
+
+.rowp {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px; /* Adjust as needed */
+    justify-content: flex-start; /* Align columns to the left */
+}
+
+.column {
+    flex: 1;
+    padding: 10px; /* Adjust spacing between columns */
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    min-width: 20%; /* Minimum width to ensure 5 columns in a row */
+    max-width: 20%; /* Maximum width to ensure 5 columns in a row */
+}
+
+.cardp {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.input-bid {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.by{
+    display:block;
+    color: red;
+    padding-left: 50%;
+}
+#detail{
+
+   background-color: blue; /* Change this to your desired color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+#card-body{
+    width:0 auto;
+    background-color:aquamarine;
+}
+
+
+
+
+
+
+
+
+
+
+

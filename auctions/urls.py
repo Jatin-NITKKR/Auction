@@ -3,7 +3,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.index, name="index"),
+   
+    path("active", views.active, name="active"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
@@ -16,7 +17,7 @@ urlpatterns = [
     path('addBid/<int:id>',views.addBid,name="addBid"),
     path('addComment/<int:id>',views.addComment,name="addComment"),
     path('closeBid/<int:id>',views.closeBid,name="closeBid"),
-    
+     path("", views.index, name="index"),
     
     
     
