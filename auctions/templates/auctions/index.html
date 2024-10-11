@@ -1,5 +1,6 @@
 {% extends "auctions/layout.html" %} {% block body %}
-<h2>Active Listings</h2>
+
+<div class="activelisting">
 <form action="{% url 'categoryWise'%}" method="POST" class="my-3">
   {% csrf_token %}
   
@@ -10,23 +11,30 @@
     {% endfor %}
   </select>
   <br>
-  <button class="btn btn-primary" type="submit">Search</button>
+  <button class="btn btn-primary button-to-left" type="submit">Search</button>
 </form>
+<h2>Listings</h2>
+</div>
 
 {% comment %} <div class="container-fluid"> {% endcomment %}
  
-  <div class="row mx-2 my-2">
+  <div class="row mx-2 my-5">
     {% for product in listings %}
-    <div class="col-sm-6 col-md-4 col-lg-3">
-      <div class="card" style="width:13.5rem;height:18rem">
-      <img src="{{ product.imageUrl }}" class="card-img-top" height="60%"alt="{{product.name}}" />
-      <div class="card-body">
-        <h5 class="card-title">{{product.name}}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">${{product.price.bid}}</h6>
-        {% comment %} <p class="card-text">{{product.descript}}</p> {% endcomment %}
-        <a href="{% url 'viewProduct' id=product.id %}" class="btn btn-primary">More Details</a>
+    <div class="column">
+      {% comment %} <a href="{% url 'viewProduct' id=product.id %}" class="card-link">  {% endcomment %}
+        <div class="card" style="width:13.5rem;height:18rem">
+        <img src="{{ product.imageUrl }}" class="card-img-top" height="60%"alt="{{product.name}}" />
+        <div class="card-body" id="card-body">
+          <h5 class="card-title">{{product.name}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">${{product.price.bid}}</h6>
+          {% comment %} <p class="card-text">{{product.descript}}</p> {% endcomment %}
+         {% comment %} {% if product.id == 4 %} <a href="{% url 'viewProduct' id=product.id %}" class="btn" id="detail">More Details</a> {% endcomment %}
+        <a href="{% url 'viewProduct' id=product.id %}" class="detail" id="details">More Details</a>
+        {% comment %} {% endif %}   {% endcomment %}
+        </div>
+        
       </div>
-    </div>
+    {% comment %} </a> {% endcomment %}
     </div>
   
  

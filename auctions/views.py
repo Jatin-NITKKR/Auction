@@ -1,12 +1,17 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
+
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from django import forms
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
 
 
 from .models import User,Category,Listing,Bid,Comment
+
 
 def viewProduct(request,id):
     productData=Listing.objects.get(pk=id)
@@ -14,7 +19,7 @@ def viewProduct(request,id):
     isInWatchlist=request.user in productData.watchlist.all()
     comments=Comment.objects.filter(listing=productData)
     now = timezone.now() 
-    return render(request,"auctions/ViewProduct.html",{
+    return render(request,"auctions/viewProduct.html",{
         "product":productData,
         "isInWatchlist":isInWatchlist,
         "comments":comments,
@@ -30,11 +35,11 @@ def closeBid(request,id):
     now = timezone.now() 
     productData.isActive=False
     productData.save()
-    return render(request,"auctions/ViewProduct.html",{
+    return render(request,"auctions/viewProduct.html",{
         "product":productData,
         "isInWatchlist":isInWatchlist,
         "comments":comments,
-        "message":"Congrats!! your auction is completed",
+        "message":"Congrats!! your product is sold",
         "update":True,
         "time":now,
         "isOwner":isOwner
@@ -43,17 +48,37 @@ def closeBid(request,id):
     
 def addBid(request,id):
     newBid=request.POST['newBid']
-    listingData= Listing.objects.get(pk=id)
-    isOwner=listingData.owner.username==request.user.username
-    if int(newBid)>listingData.price.bid:
+    productData=Listing.objects.get(pk=id)
+    isOwner=productData.owner.username==request.user.username
+    isInWatchlist=request.user in productData.watchlist.all()
+    comments=Comment.objects.filter(listing=productData)
+    now = timezone.now()
+    if int(newBid)>productData.price.bid:
         updateBid=Bid(user=request.user,bid=int(newBid))
         updateBid.save()
-        listingData.price=updateBid
-        listingData.save()
-        return HttpResponseRedirect(reverse("viewProduct",args=(id, )))
-        
+        productData.price=updateBid
+        productData.save()
+
+        return render(request,"auctions/viewProduct.html",{
+        "product":productData,
+        "isInWatchlist":isInWatchlist,
+        "comments":comments,
+        "message":"Congrats!! You are current highest bidder right now",
+        "update":True,
+        "time":now,
+        "isOwner":isOwner
+            })
+
     else:
-        return HttpResponseRedirect(reverse("viewProduct",args=(id, )))
+        return render(request,"auctions/viewProduct.html",{
+        "product":productData,
+        "isInWatchlist":isInWatchlist,
+        "comments":comments,
+        "message":"Oops!! your bid is lower than current bid,bid higher.",
+        "update":False,
+        "time":now,
+        "isOwner":isOwner
+    })
         
 def addComment(request,id):
     author=request.user
@@ -90,12 +115,20 @@ def addWatchlist(request,id):
     return HttpResponseRedirect(reverse("viewProduct",args=(id, )))    
 
 def index(request):
+    activeListings=Listing.objects.all()
+    allCategories=Category.objects.all()
+    return render(request, "auctions/index.html",{
+        "listings":activeListings,
+        "categories":allCategories,
+    })
+def active(request):
     activeListings=Listing.objects.filter(isActive=True)
     allCategories=Category.objects.all()
     return render(request, "auctions/index.html",{
         "listings":activeListings,
         "categories":allCategories,
     })
+    
     
 def categoryWise(request):
     if request.method=="POST":
@@ -176,11 +209,21 @@ def register(request):
 
         # Ensure password matches confirmation
         password = request.POST["password"]
+        message=''
         confirmation = request.POST["confirmation"]
-        if password != confirmation:
-            return render(request, "auctions/register.html", {
-                "message": "Passwords must match."
+
+        if password != confirmation :
+          return render(request, "auctions/register.html", {
+                "message": "Password must match."
             })
+            
+        if len(password)<6:
+            return render(request, "auctions/register.html", {
+                "message": "Password must be alteast 6 char long."
+            })
+            
+            
+        
 
         # Attempt to create new user
         try:
