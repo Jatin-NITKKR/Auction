@@ -1,5 +1,5 @@
 {% extends "auctions/layout.html" %} {% block body %}
-
+{% comment %} //updating index {% endcomment %}
 <div class="activelisting">
 <form action="{% url 'categoryWise'%}" method="POST" class="my-3">
   {% csrf_token %}
